@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History | The Pet Rock Exchange</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="history.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <h1>The Pet Rock Exchange</h1>
+            <ul>
+                <li><a href="main.html">Buy</a></li>
+                <li><a href="sell.html">Sell</a></li>
+                <li><a href="trade.html">Trade</a></li>
+                <li><a href="account.html">Account</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Section -->
+    <main>
+        <div class="container history-container">
+            <h2 class="section-title">Transaction History</h2>
+            <p class="history-subtitle">Your complete pet rock trading record</p>
+
+            <div class="history-header">
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalTransactions">0</div>
+                        <div class="stat-label">Total Transactions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalSpent">💎 0</div>
+                        <div class="stat-label">Total Spent</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalTrades">0</div>
+                        <div class="stat-label">Trades Made</div>
+                    </div>
+                </div>
+
+                <div class="filter-controls">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="purchase">Purchases</button>
+                    <button class="filter-btn" data-filter="sale">Sales</button>
+                    <button class="filter-btn" data-filter="trade">Trades</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="transactionTable">
+                    <thead>
+                        <tr>
+                            <th>Date of Transaction</th>
+                            <th>Name of Pet Rock</th>
+                            <th>Price</th>
+                            <th>Trade? (Y/N)</th>
+                            <th>Parties Involved</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionBody">
+                        <!-- Transactions will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 The Pet Rock Exchange. All rights reserved.
+    </footer>
+
+    <script>
+        // Generate dynamic transaction history based on current date
+        const currentDate = new Date();
+        const username = "You";
+
+        // Sample rock names pool
+        const rockNames = [
+            "Rocky Red", "Blue Boulder", "Granite Greg", "Marble Mary",
+            "Pebble Pete", "Slate Sam", "Crystal Claire", "Limestone Larry",
+            "Quartz Quinn", "Obsidian Ollie", "Sandstone Sally", "Basalt Bob"
+        ];
+
+        // Sample trader names
+        const traderNames = [
+            "@RockyTrader", "@StoneCollector", "@PebbleFan", "@RockEnthusiast",
+            "@BoulderBoss", "@GemHunter", "@MineralMaster", "@CrystalQueen"
+        ];
+
+        // Generate transactions for the past 6 months
+        function generateTransactions() {
+            const transactions = [];
+            const numTransactions = Math.floor(Math.random() * 15) + 10;
+
+            for (let i = 0; i < numTransactions; i++) {
+                const daysAgo = Math.floor(Math.random() * 180);
+                const transDate = new Date(currentDate);
+                transDate.setDate(transDate.getDate() - daysAgo);
+
+                const isTrade = Math.random() > 0.6;
+                const isPurchase = !isTrade && Math.random() > 0.4;
+                const price = Math.floor(Math.random() * 50) + 10;
+
+                let parties;
+                if (isTrade) {
+                    parties = `${username} ↔ ${traderNames[Math.floor(Math.random() * traderNames.length)]}`;
+                } else if (isPurchase) {
+                    parties = `${traderNames[Math.floor(Math.random() * traderNames.length)]} → ${username}`;
+                } else {
+                    parties = `${username} → ${traderNames[Math.floor(Math.random() * traderNames.length)]}`;
+                }
+
+                transactions.push({
+                    date: transDate,
+                    rockName: rockNames[Math.floor(Math.random() * rockNames.length)],
+                    price: price,
+                    isTrade: isTrade,
+                    isPurchase: isPurchase,
+                    parties: parties,
+                    type: isTrade ? 'trade' : (isPurchase ? 'purchase' : 'sale')
+                });
+            }
+
+            transactions.sort((a, b) => b.date - a.date);
+            return transactions;
+        }
+
+        let allTransactions = generateTransactions();
+        let currentFilter = 'all';
+
+        function formatDate(date) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function renderTransactions(filter = 'all') {
+            const tbody = document.getElementById('transactionBody');
+            const filtered = filter === 'all' 
+                ? allTransactions 
+                : allTransactions.filter(t => t.type === filter);
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No transactions found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(t => `
+                <tr>
+                    <td>${formatDate(t.date)}</td>
+                    <td><strong>${t.rockName}</strong></td>
+                    <td class="price">💎 ${t.price}</td>
+                    <td class="${t.isTrade ? 'trade-yes' : 'trade-no'}">${t.isTrade ? 'Y' : 'N'}</td>
+                    <td class="parties">${t.parties.replace(username, `<span class="party-you">${username}</span>`)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function updateStats() {
+            const totalTransactions = allTransactions.length;
+            const totalSpent = allTransactions
+                .filter(t => t.isPurchase)
+                .reduce((sum, t) => sum + t.price, 0);
+            const totalTrades = allTransactions.filter(t => t.isTrade).length;
+
+            document.getElementById('totalTransactions').textContent = totalTransactions;
+            document.getElementById('totalSpent').textContent = `💎 ${totalSpent}`;
+            document.getElementById('totalTrades').textContent = totalTrades;
+        }
+
+        // Filter button handlers
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                renderTransactions(currentFilter);
+            });
+        });
+
+        // Initial render
+        renderTransactions();
+        updateStats();
+    </script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+/* SELL PAGE STYLING (Matches buy.css + profile.css) */
+
+/* Layout */
+.sell-container {
+    margin: 40px auto;
+    max-width: 1000px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+.sell-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+/* Rock Preview */
+.rock-preview {
+    flex: 1 1 300px;
+    text-align: center;
+}
+
+.rock-preview img {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 15px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+.price-info {
+    margin-top: 15px;
+    font-size: 1.1em;
+    color: #444;
+}
+
+/* Listing Form */
+.listing-form {
+    flex: 1 1 400px;
+}
+
+.listing-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+label {
+    font-weight: bold;
+    color: #333;
+}
+
+input[type="text"],
+textarea {
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Button */
+.list-btn {
+    background-color: #007bff;
+    color: white;
+    font-size: 1.1em;
+    font-weight: bold;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+.list-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+    .sell-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .rock-preview img {
+        width: 200px;
+        height: 200px;
+    }
+}
